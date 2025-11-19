@@ -266,7 +266,7 @@ app.get("/", (req, res) => {
 app.get("/auth/facebook", (req, res) => {
   const authURL = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${FB_APP_ID}&redirect_uri=${encodeURIComponent(
     FB_REDIRECT_URI
- )}&scope=email,public_profile,pages_show_list,pages_manage_posts,pages_messaging,pages_read_engagement&response_type=code`;
+ )}&scope=pages_messaging,pages_read_engagement,pages_manage_metadata,email,public_profile&response_type=code`;
   res.redirect(authURL);
 });
 
