@@ -266,8 +266,7 @@ app.get("/", (req, res) => {
 app.get("/auth/facebook", (req, res) => {
   const authURL = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${FB_APP_ID}&redirect_uri=${encodeURIComponent(
     FB_REDIRECT_URI
- )}&scope=pages_messaging,pages_manage_messages,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;
-  res.redirect(authURL);
+  )}&scope=pages_messaging,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;  res.redirect(authURL);
 });
 
 app.get("/auth/facebook/callback", async (req, res) => {
