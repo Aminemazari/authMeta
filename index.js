@@ -263,10 +263,55 @@ app.get("/", (req, res) => {
 });
 
 // ==== FACEBOOK ROUTES ====
+
+// Facebook: Show input for short-lived token
 app.get("/auth/facebook", (req, res) => {
-  const authURL = `https://www.facebook.com/v20.0/dialog/oauth?client_id=${FB_APP_ID}&redirect_uri=${encodeURIComponent(
-    FB_REDIRECT_URI
-  )}&scope=pages_messaging,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;  res.redirect(authURL);
+  const content = `
+    <h1>🔐 Facebook Token Exchange</h1>
+    <p class="subtitle">Paste your Facebook short-lived token below to get a long-lived token.</p>
+    <form method="POST" action="/auth/facebook/exchange">
+      <input type="text" name="short_token" placeholder="Short-Lived Token" style="width:100%;padding:12px;font-size:16px;border-radius:8px;border:1px solid #ccc;margin-bottom:20px;" required />
+      <button type="submit" class="auth-button facebook-btn" style="width:100%;">Exchange Token</button>
+    </form>
+    <a href="/" class="back-button">← Back to Home</a>
+  `;
+  res.send(getHTML(content));
+});
+
+// Facebook: Handle token exchange
+app.use(express.urlencoded({ extended: true }));
+app.post("/auth/facebook/exchange", async (req, res) => {
+  const shortToken = req.body.short_token;
+  if (!shortToken) {
+    return res.status(400).send(getHTML('<h1>Error</h1><p class="subtitle">Short-lived token is required.</p>'));
+  }
+  try {
+    const url = `https://graph.facebook.com/v20.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${FB_APP_ID}&client_secret=${FB_APP_SECRET}&fb_exchange_token=${shortToken}`;
+    const fbRes = await fetch(url);
+    const data = await fbRes.json();
+    if (!data.access_token) {
+      return res.status(400).send(getHTML(`<h1>Error</h1><p class="subtitle">Failed to exchange token.</p><pre>${JSON.stringify(data, null, 2)}</pre>`));
+    }
+    const content = `
+      <h1>✨ Facebook Token Exchanged</h1>
+      <p class="subtitle">Your long-lived token:</p>
+      <div class="token-card">
+        <h3><span class="success-icon">✓</span> Long-Lived Token</h3>
+        <div class="token-item">
+          <span class="token-label">Access Token</span>
+          <div class="token-value">${data.access_token}</div>
+        </div>
+        <div class="info-badge">
+          ⏱️ Expires in ${data.expires_in ? Math.round(data.expires_in / 86400) : '?'} days
+        </div>
+      </div>
+      <a href="/" class="back-button">← Generate Another Token</a>
+    `;
+    res.send(getHTML(content));
+  } catch (err) {
+    console.error("Facebook Exchange Error:", err);
+    res.status(500).send(getHTML('<h1>Error</h1><p class="subtitle">Internal Server Error</p>'));
+  }
 });
 
 app.get("/auth/facebook/callback", async (req, res) => {
