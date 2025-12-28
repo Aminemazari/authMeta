@@ -375,9 +375,7 @@ app.get("/auth/facebook/callback", async (req, res) => {
 
 // ==== INSTAGRAM ROUTES ====
 app.get("/auth/instagram", (req, res) => {
-  const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${IG_APP_ID}&redirect_uri=${encodeURIComponent(
-    IG_REDIRECT_URI
-  )}&scope=page s_messaging,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;  res.redirect(authUrl);
+  const authUrl = `https://www.instagram.com/oauth/authorize?force_reauth=true&client_id=1780227926201656&redirect_uri=https://authmeta.onrender.com/auth/instagram/callback&response_type=code&scope=instagram_business_basic%2Cinstagram_business_manage_messages%2Cinstagram_business_manage_comments%2Cinstagram_business_content_publish%2Cinstagram_business_manage_insights`;  res.redirect(authUrl);
 });
 
 app.get("/auth/instagram/callback", async (req, res) => {
