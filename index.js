@@ -377,7 +377,7 @@ app.get("/auth/facebook/callback", async (req, res) => {
 app.get("/auth/instagram", (req, res) => {
   const authUrl = `https://www.instagram.com/oauth/authorize?client_id=${IG_APP_ID}&redirect_uri=${encodeURIComponent(
     IG_REDIRECT_URI
-  )}&scope=pages_messaging,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;  res.redirect(authUrl);
+  )}&scope=page s_messaging,pages_show_list,pages_read_engagement,pages_manage_metadata,business_management,email,public_profile&response_type=code`;  res.redirect(authUrl);
 });
 
 app.get("/auth/instagram/callback", async (req, res) => {
